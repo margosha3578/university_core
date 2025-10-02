@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# Django static and media
+/staticfiles/
+/media/
+
+# Django migrations
+**/migrations/
+!**/migrations/__init__.py
+
+# Environment files
+.env
+*.env
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage and testing
+htmlcov/
+.coverage
+.tox/
+.pytest_cache/
+
+# Docker
+*.sqlite3
+*.pid
+__MACOSX/
