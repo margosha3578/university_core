@@ -5,7 +5,6 @@ __pycache__/
 *.egg
 *.egg-info/
 dist/
-build/
 *.log
 
 # Django static and media
