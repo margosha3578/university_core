@@ -15,6 +15,9 @@ RUN apt-get update \
         gcc \
         python3-dev \
         musl-dev \
+        libffi-dev \
+        libssl-dev \
+        cargo \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
@@ -26,7 +29,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . /app/
 
-# Create directory for media files
+# Create directories for media files and static files
 RUN mkdir -p /app/media /app/staticfiles
 
 # Collect static files

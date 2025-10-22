@@ -1,3 +1,5 @@
+name: university-core
+
 services:
   web:
     build:

@@ -1,11 +1,14 @@
 import os
+
 from decouple import config
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY', default=os.environ.get('SECRET_KEY', 'unsafe-default'))
+SECRET_KEY = config('SECRET_KEY', default=os.environ.get('SECRET_KEY', 'django-insecure-university-core-2024-secret-key-change-in-production-abc123xyz789'))
 DEBUG = config('DEBUG', default=True, cast=bool)
+
+AUTH_USER_MODEL = 'users.User'
 
 # Allow all hosts in Docker, restrict in production
 ALLOWED_HOSTS = ["*"]
@@ -18,12 +21,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third-party apps
-    'rest_framework',
-    'drf_yasg',
-
     # Local apps
     'users',
+    'courses',
+    'schedule',
 ]
 
 MIDDLEWARE = [
@@ -58,46 +59,32 @@ TEMPLATES = [
 ]
 
 # Database Configuration
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default=os.environ.get('DB_NAME', 'default_db')),
-        'USER': config('DB_USER', default=os.environ.get('DB_NAME', 'default_db')),
-        'PASSWORD': config('DB_PASSWORD', default=os.environ.get('DB_NAME', 'default_db')),
-        'HOST': config('DB_HOST', default=os.environ.get('DB_NAME', 'localhost')),
-        'PORT': config('DB_PORT', default=os.environ.get('DB_NAME', 5432)),
-    }
-}
-
-# DRF Configuration
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20
-}
-
-# Swagger Settings
-SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Basic': {
-            'type': 'basic'
-        },
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header'
+# Use SQLite for development, PostgreSQL for production
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
-    },
-    'USE_SESSION_AUTH': True,
-    'JSON_EDITOR': True,
-    'DEFAULT_MODEL_RENDERING': 'example'
-}
+    }
+else:
+    # PostgreSQL Configuration for production
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default=os.environ.get('DB_NAME', 'default_db')),
+            'USER': config('DB_USER', default=os.environ.get('DB_USER', 'default_user')),
+            'PASSWORD': config('DB_PASSWORD', default=os.environ.get('DB_PASSWORD', 'default_password')),
+            'HOST': config('DB_HOST', default=os.environ.get('DB_HOST', 'localhost')),
+            'PORT': config('DB_PORT', default=os.environ.get('DB_PORT', 5432)),
+        }
+    }
 
-REDOC_SETTINGS = {
-    'LAZY_RENDERING': False,
-}
+# JWT Settings
+JWT_SECRET_KEY = config('SECRET_KEY', default=SECRET_KEY)
+JWT_ALGORITHM = 'HS256'
+JWT_ACCESS_TOKEN_LIFETIME = 60 * 60  # 1 hour in seconds
+JWT_REFRESH_TOKEN_LIFETIME = 24 * 60 * 60  # 1 day in seconds
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -115,6 +102,62 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {name} {module}.{funcName} - {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+        'simple': {
+            'format': '[{levelname}] {asctime} - {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'users': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'courses': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'schedule': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
 
 # Security settings for production
 if not DEBUG:

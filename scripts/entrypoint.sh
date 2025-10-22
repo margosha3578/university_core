@@ -31,9 +31,16 @@ if [ "$DEBUG" = "True" ]; then
     python manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
-if not User.objects.filter(username='admin').exists():
-    User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-    print('Superuser created: admin / admin123')
+admin_email = 'admin@example.com'
+if not User.objects.filter(email=admin_email).exists():
+    User.objects.create_superuser(
+        email=admin_email,
+        password='admin123',
+        first_name='Admin',
+        last_name='User',
+        user_role='admin'
+    )
+    print('Superuser created: admin@example.com / admin123')
 else:
     print('Superuser already exists')
 "

@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>University Portal</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'frontend/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'frontend/styles.css' %}?v={% now "U" %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -52,6 +55,663 @@
             border-radius: 12px; 
             margin: 20px; 
             border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        
+        /* User dropdown menu styles */
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .user-details:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-details i.fa-chevron-up {
+            transition: transform 0.3s ease;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .dropdown-menu.show + .user-details i.fa-chevron-up,
+        .user-dropdown:has(.dropdown-menu.show) .user-details i.fa-chevron-up {
+            transform: rotate(180deg);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #4F46E5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .user-text {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        /* User name in table should match email text color */
+        .users-table .user-name {
+            color: inherit;
+            font-size: 15px;
+            font-weight: 400;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: capitalize;
+        }
+        
+        .user-dropdown {
+            position: relative;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background-color: #2D3748;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            margin-bottom: 8px;
+            display: none;
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+        
+        /* Hide auth-required items when not logged in */
+        .nav-item.auth-required {
+            display: none;
+        }
+        
+        .logged-in .nav-item.auth-required {
+            display: block;
+        }
+        
+        /* Hide auth-required dashboard cards when not logged in */
+        .dashboard-card.auth-required {
+            display: none;
+        }
+        
+        .app-container.logged-in .dashboard-card.auth-required {
+            display: block;
+        }
+        
+        /* Courses Grid Styles */
+        .courses-grid-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #E5E7EB;
+            overflow: hidden;
+        }
+        
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            padding: 24px;
+            min-height: 200px;
+        }
+        
+        .course-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .course-card-header {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        /* Course Menu Styles */
+        .course-menu-container {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 10;
+        }
+        
+        .course-menu-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1F2937;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .course-menu-btn:hover {
+            background: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .course-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            min-width: 180px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border: 1px solid #E5E7EB;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+        
+        .course-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .course-dropdown-menu .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #374151;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .course-dropdown-menu .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .course-dropdown-menu .dropdown-item:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .course-dropdown-menu .dropdown-item:hover {
+            background-color: #F3F4F6;
+        }
+        
+        .course-dropdown-menu .dropdown-item i {
+            width: 16px;
+            font-size: 14px;
+        }
+        
+        .course-dropdown-menu .dropdown-item-danger {
+            color: #DC2626;
+        }
+        
+        .course-dropdown-menu .dropdown-item-danger:hover {
+            background-color: #FEE2E2;
+        }
+        
+        /* User Menu Styles (for table rows) */
+        .user-menu-container {
+            position: relative;
+        }
+        
+        .user-menu-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #F3F4F6;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #374151;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .user-menu-btn:hover {
+            background: #E5E7EB;
+            transform: scale(1.05);
+        }
+        
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            min-width: 180px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            border: 1px solid #E5E7EB;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+        
+        .user-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .user-dropdown-menu .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #374151;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .user-dropdown-menu .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .user-dropdown-menu .dropdown-item:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .user-dropdown-menu .dropdown-item:hover {
+            background-color: #F3F4F6;
+        }
+        
+        .user-dropdown-menu .dropdown-item i {
+            width: 16px;
+            font-size: 14px;
+        }
+        
+        .user-dropdown-menu .dropdown-item-danger {
+            color: #DC2626;
+        }
+        
+        .user-dropdown-menu .dropdown-item-danger:hover {
+            background-color: #FEE2E2;
+        }
+        
+        .course-card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .course-card-content {
+            padding: 20px;
+        }
+        
+        .course-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .course-card-description {
+            color: #6B7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .course-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #9CA3AF;
+        }
+        
+        .course-card-stats {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .course-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .course-card-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+        
+        .course-status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-active {
+            background-color: #ECFDF5;
+            color: #047857;
+        }
+        
+        .status-inactive {
+            background-color: #FEF2F2;
+            color: #B91C1C;
+        }
+        
+        /* Course Detail Modal Styles */
+        .course-detail-modal .modal-content {
+            max-width: 800px;
+        }
+        
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: white;
+        }
+        
+        .lesson-order {
+            width: 32px;
+            height: 32px;
+            background-color: #4F46E5;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .lesson-info {
+            flex: 1;
+        }
+        
+        .lesson-title {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 4px;
+        }
+        
+        .lesson-description {
+            font-size: 14px;
+            color: #6B7280;
+        }
+        
+        /* Course Detail Page Styles */
+        .course-info-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #E5E7EB;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        
+        .course-info-header {
+            display: flex;
+            align-items: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            color: white;
+        }
+        
+        .course-info-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            margin-right: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        
+        .course-info-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        .course-info-details {
+            flex: 1;
+        }
+        
+        .course-info-details h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white;
+        }
+        
+        .course-info-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .course-info-meta span {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .course-info-description {
+            padding: 24px;
+        }
+        
+        .course-info-description h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 12px;
+        }
+        
+        .course-info-description p {
+            color: #6B7280;
+            line-height: 1.6;
+        }
+        
+        .lessons-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #E5E7EB;
+            overflow: hidden;
+        }
+        
+        .lessons-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #E5E7EB;
+            background: #F9FAFB;
+        }
+        
+        .lessons-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+        }
+        
+        .lessons-list {
+            padding: 24px;
+            min-height: 200px;
+        }
+        
+        .lesson-card {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .lesson-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .lesson-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .lesson-order-badge {
+            width: 32px;
+            height: 32px;
+            background-color: #4F46E5;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 16px;
+        }
+        
+        .lesson-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+            flex: 1;
+        }
+        
+        .lesson-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .lesson-description-text {
+            color: #6B7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .lesson-full-text {
+            color: #374151;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #F9FAFB;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #4F46E5;
+            display: none;
+        }
+        
+        .lesson-full-text.expanded {
+            display: block;
+        }
+        
+        .lesson-toggle-text {
+            color: #4F46E5;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .lesson-toggle-text:hover {
+            text-decoration: underline;
+        }
+        
+        .btn-secondary {
+            background-color: #6B7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4B5563;
+            transform: translateY(-1px);
         }
         .main-content { flex: 1; margin-left: 280px; background-color: #fbfbfb; min-height: 100vh; }
         .content-wrapper { padding: 30px; max-width: 1200px; margin: 0 auto; }
@@ -167,6 +827,74 @@
         .form-group input[type="file"] { padding: 8px; }
         .file-info { font-size: 12px; color: #6B7280; margin-top: 4px; display: block; }
         
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB;
+        }
+        
+        /* Checkbox for All Day Event */
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+            gap: 12px;
+        }
+        
+        .toggle-text {
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        
+        .toggle-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #3B82F6;
+            margin: 0;
+            vertical-align: middle;
+        }
+        
+        /* Settings Page Styles */
+        .settings-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .settings-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .settings-section h2 {
+            margin: 0 0 20px 0;
+            color: #1F2937;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .settings-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .form-help {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 4px;
+            display: block;
+        }
+        
         /* Delete Confirmation Modal */
         .delete-confirmation { text-align: center; padding: 20px 0; }
         .warning-icon { margin-bottom: 20px; }
@@ -207,6 +935,326 @@
             .form-row { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr; }
         }
+
+        /* Calendar Styles */
+        .calendar-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 16px 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .calendar-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .calendar-title h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1F2937;
+            margin: 0;
+        }
+
+
+        .calendar-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #E5E7EB;
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 100px;
+            padding: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-day:hover {
+            background: #F9FAFB;
+        }
+
+        .calendar-day.other-month {
+            background: #F9FAFB;
+            color: #9CA3AF;
+        }
+
+        .calendar-day.today {
+            background: #EFF6FF;
+            border: 2px solid #4F46E5;
+        }
+
+        .calendar-day.has-events {
+            background: #F0FDF4;
+        }
+
+        .calendar-day.has-events.today {
+            background: #EFF6FF;
+        }
+
+        .day-number {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 4px;
+            flex-shrink: 0;
+        }
+
+        .day-events {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .day-event {
+            background: #4F46E5;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 1.2;
+            margin-bottom: 1px;
+            flex-shrink: 0;
+        }
+
+        .day-event.high-priority {
+            background: #DC2626;
+        }
+
+        .day-event.urgent-priority {
+            background: #B91C1C;
+        }
+
+        .day-event.medium-priority {
+            background: #4F46E5;
+        }
+
+        .day-event.low-priority {
+            background: #059669;
+        }
+
+        .day-event-count {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #4F46E5;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Events List Styles */
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-item {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .event-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #1F2937;
+            font-size: 16px;
+        }
+
+        .event-time {
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+        .event-description {
+            color: #4B5563;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .event-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .event-type-badge {
+            background: #EFF6FF;
+            color: #4F46E5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .event-priority-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .event-priority-badge.low {
+            background: #F0FDF4;
+            color: #059669;
+        }
+
+        .event-priority-badge.medium {
+            background: #EFF6FF;
+            color: #4F46E5;
+        }
+
+        .event-priority-badge.high {
+            background: #FEF2F2;
+            color: #DC2626;
+        }
+
+        .event-priority-badge.urgent {
+            background: #FEF2F2;
+            color: #B91C1C;
+        }
+
+        .event-location {
+            color: #6B7280;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .event-actions button {
+            padding: 6px 12px;
+            border: 1px solid #D1D5DB;
+            background: white;
+            color: #6B7280;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .event-actions button:hover {
+            background: #F9FAFB;
+            border-color: #9CA3AF;
+        }
+
+        .event-actions .btn-edit:hover {
+            background: #EFF6FF;
+            border-color: #4F46E5;
+            color: #4F46E5;
+        }
+
+        .event-actions .btn-delete:hover {
+            background: #FEF2F2;
+            border-color: #DC2626;
+            color: #DC2626;
+        }
+
+        .day-events-actions {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .event-preview {
+            background: #F9FAFB;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+        }
+
+        .event-preview .event-title {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 4px;
+        }
+
+        .event-preview .event-meta {
+            font-size: 14px;
+            color: #6B7280;
+        }
+
+
+        /* Responsive Calendar */
+        @media (max-width: 768px) {
+            .calendar-navigation {
+                flex-direction: column;
+                gap: 16px;
+                align-items: stretch;
+            }
+
+            .calendar-controls {
+                justify-content: space-between;
+            }
+
+            .calendar-day {
+                min-height: 70px;
+                padding: 4px;
+            }
+
+            .day-number {
+                font-size: 11px;
+                margin-bottom: 2px;
+            }
+
+            .day-event {
+                font-size: 9px;
+                padding: 2px 4px;
+                line-height: 1.1;
+            }
+
+            .calendar-year-view {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -228,7 +1276,7 @@
                             <span>Main Page</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item auth-required">
                         <a href="#" class="nav-link" data-page="users">
                             <i class="fas fa-users"></i>
                             <span>Users</span>
@@ -240,19 +1288,13 @@
                             <span>Courses</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-page="grades">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Grades</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
+                    <li class="nav-item auth-required">
                         <a href="#" class="nav-link" data-page="schedule">
-                            <i class="fas fa-calendar"></i>
+                            <i class="fas fa-calendar-alt"></i>
                             <span>Schedule</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item auth-required">
                         <a href="#" class="nav-link" data-page="settings">
                             <i class="fas fa-cog"></i>
                             <span>Settings</span>
@@ -263,29 +1305,13 @@
             
             <!-- User Info Box at bottom left -->
             <div class="user-info">
-                {% if is_authenticated and user %}
-                    <div class="user-details">
-                        <div class="user-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="user-text">
-                            <div class="user-name">{{ user.first_name }} {{ user.last_name }}</div>
-                            <div class="user-role">{{ user.user_role|capfirst }}</div>
-                        </div>
-                    </div>
-                    <div class="user-actions">
-                        <button class="btn-logout" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </div>
-                {% else %}
-                    <div class="login-prompt">
-                        <button class="btn-login" onclick="showLoginModal()">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Log In
-                        </button>
-                    </div>
-                {% endif %}
+                <!-- Content will be dynamically updated by JavaScript -->
+                <div class="login-prompt">
+                    <button class="btn-login" onclick="showLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Log In
+                    </button>
+                </div>
             </div>
         </aside>
 
@@ -296,11 +1322,11 @@
                 <div id="main-page" class="page-content active">
                     <header class="page-header">
                         <h1>Welcome to University Portal</h1>
-                        <p class="page-subtitle">Your central hub for academic and administrative activities</p>
+                        <p class="page-subtitle" id="main-subtitle">Your central hub for academic and administrative activities</p>
                     </header>
                     
                     <div class="dashboard-grid">
-                        <div class="dashboard-card">
+                        <div class="dashboard-card auth-required">
                             <div class="card-icon">
                                 <i class="fas fa-users"></i>
                             </div>
@@ -322,18 +1348,8 @@
                             </div>
                         </div>
                         
-                        <div class="dashboard-card">
-                            <div class="card-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="card-content">
-                                <h3>Academic Performance</h3>
-                                <p>Track grades, assessments, and academic achievements</p>
-                                <button class="btn-primary" onclick="navigateTo('grades')">View Grades</button>
-                            </div>
-                        </div>
                         
-                        <div class="dashboard-card">
+                        <div class="dashboard-card auth-required">
                             <div class="card-icon">
                                 <i class="fas fa-calendar"></i>
                             </div>
@@ -429,7 +1445,7 @@
                                             <th>Role</th>
                                             <th>Phone</th>
                                             <th>Date Created</th>
-                                            <th>Actions</th>
+                                            <th style="width: 50px;"></th>
                                         </tr>
                                     </thead>
                                     <tbody id="users-table-body">
@@ -455,41 +1471,334 @@
 
                 <div id="courses-page" class="page-content">
                     <header class="page-header">
+                        <div class="page-header-content">
+                            <div class="page-title-section">
                         <h1>Course Management</h1>
                         <p class="page-subtitle">Manage university courses and curricula</p>
+                            </div>
+                            <div class="page-actions auth-required">
+                                <button class="btn-primary btn-create-course" onclick="showCreateCourseModal()">
+                                    <i class="fas fa-plus"></i>
+                                    Create Course
+                                </button>
+                            </div>
+                        </div>
                     </header>
                     <div class="content-area">
-                        <p>Course management interface will be implemented here.</p>
+                        <!-- Course Statistics -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="total-courses">0</div>
+                                    <div class="stat-label">Total Courses</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon student-icon">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="active-courses">0</div>
+                                    <div class="stat-label">Active Courses</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon professor-icon">
+                                    <i class="fas fa-list-ol"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="total-lessons">0</div>
+                                    <div class="stat-label">Total Lessons</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon admin-icon">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="courses-by-me">0</div>
+                                    <div class="stat-label">My Courses</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Courses Grid -->
+                        <div class="courses-grid-container">
+                            <div class="table-header">
+                                <h3>Courses</h3>
+                                <div class="table-actions">
+                                    <div class="search-box">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" id="course-search" placeholder="Search courses..." onkeyup="filterCourses()">
+                                    </div>
+                                    <select id="status-filter" onchange="filterCourses()">
+                                        <option value="">All Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="courses-grid" id="courses-grid">
+                                <!-- Courses will be loaded here -->
+                                <div class="empty-state">
+                                    <i class="fas fa-book"></i>
+                                    <p>No courses found</p>
+                                    <button class="btn-primary auth-required" onclick="showCreateCourseModal()" style="display: none;">Create First Course</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="grades-page" class="page-content">
+                <!-- Course Detail Page -->
+                <div id="course-detail-page" class="page-content">
                     <header class="page-header">
-                        <h1>Grade Management</h1>
-                        <p class="page-subtitle">Track and manage academic performance</p>
+                        <div class="page-header-content">
+                            <div class="page-title-section">
+                                <button class="btn-secondary" onclick="navigateTo('courses')" style="margin-right: 16px;">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Back to Courses
+                                </button>
+                                <div>
+                                    <h1 id="course-detail-title">Course Details</h1>
+                                    <p class="page-subtitle" id="course-detail-subtitle">Course information and lessons</p>
+                                </div>
+                            </div>
+                            <div class="page-actions auth-required">
+                                <button class="btn-primary btn-create-lesson" onclick="showCreateLessonModal()">
+                                    <i class="fas fa-plus"></i>
+                                    Create Lesson
+                                </button>
+                            </div>
+                        </div>
                     </header>
                     <div class="content-area">
-                        <p>Grade management interface will be implemented here.</p>
+                        <!-- Course Information Card -->
+                        <div class="course-info-card">
+                            <div class="course-info-header">
+                                <div class="course-info-image">
+                                    <div id="course-info-image-placeholder">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                </div>
+                                <div class="course-info-details">
+                                    <h2 id="course-info-title">Course Title</h2>
+                                    <div class="course-info-meta">
+                                        <span class="course-status-badge" id="course-info-status">Active</span>
+                                        <span id="course-info-creator">Created by: Demo User</span>
+                                        <span id="course-info-date">Created: Jan 15, 2024</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="course-info-description">
+                                <h3>Description</h3>
+                                <p id="course-info-description-text">Course description will appear here.</p>
+                            </div>
+                        </div>
+
+                        <!-- Lessons Section -->
+                        <div class="lessons-section">
+                            <div class="lessons-header">
+                                <h3>Lessons (<span id="lessons-count">0</span>)</h3>
+                            </div>
+                            <div class="lessons-list" id="lessons-list">
+                                <!-- Lessons will be loaded here -->
+                                <div class="empty-state">
+                                    <i class="fas fa-list-ol"></i>
+                                    <p>No lessons available yet</p>
+                                    <button class="btn-primary auth-required" onclick="showCreateLessonModal()" style="display: none;">Create First Lesson</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Schedule Page -->
                 <div id="schedule-page" class="page-content">
                     <header class="page-header">
-                        <h1>Schedule Management</h1>
-                        <p class="page-subtitle">View and manage class schedules</p>
+                        <div class="page-header-content">
+                            <div class="page-title-section">
+                                <h1>Schedule</h1>
+                                <p class="page-subtitle">Manage events and calendar</p>
+                            </div>
+                            <div class="page-actions auth-required">
+                                <button class="btn-primary" onclick="showCreateEventModal()">
+                                    <i class="fas fa-plus"></i>
+                                    Create Event
+                                </button>
+                            </div>
+                        </div>
                     </header>
                     <div class="content-area">
-                        <p>Schedule management interface will be implemented here.</p>
+                        <!-- Calendar Navigation -->
+                        <div class="calendar-navigation">
+                            <div class="calendar-controls">
+                                <button class="btn-secondary" onclick="navigateCalendar('prev')">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div class="calendar-title">
+                                    <h2 id="calendar-month-year">January 2024</h2>
+                                </div>
+                                <button class="btn-secondary" onclick="navigateCalendar('next')">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
                     </div>
                 </div>
+
+                        <!-- Calendar Container -->
+                        <div class="calendar-container">
+                            <div id="calendar-grid" class="calendar-grid">
+                                <!-- Calendar will be generated here -->
+                            </div>
+                        </div>
+
+                        <!-- Event Statistics -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="total-events">0</div>
+                                    <div class="stat-label">Total Events</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-day"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="today-events">0</div>
+                                    <div class="stat-label">Today's Events</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-week"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="week-events">0</div>
+                                    <div class="stat-label">This Week</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-plus"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-number" id="my-events">0</div>
+                                    <div class="stat-label">My Events</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
 
                 <div id="settings-page" class="page-content">
                     <header class="page-header">
                         <h1>Settings</h1>
-                        <p class="page-subtitle">Configure system settings and preferences</p>
+                        <p class="page-subtitle">Manage your profile and account settings</p>
                     </header>
                     <div class="content-area">
-                        <p>Settings interface will be implemented here.</p>
+                        <div class="settings-container">
+                            <div class="settings-section">
+                                <h2>Profile Information</h2>
+                                <form id="settingsForm" class="settings-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="settings-first-name">First Name *</label>
+                                            <input type="text" id="settings-first-name" name="first_name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings-last-name">Last Name *</label>
+                                            <input type="text" id="settings-last-name" name="last_name" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="settings-father-name">Father Name</label>
+                                            <input type="text" id="settings-father-name" name="father_name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings-date-of-birth">Date of Birth</label>
+                                            <input type="date" id="settings-date-of-birth" name="date_of_birth">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="settings-email">Email Address *</label>
+                                        <input type="email" id="settings-email" name="email" required readonly>
+                                        <small class="form-help">Email cannot be changed</small>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="settings-phone">Phone Number</label>
+                                            <input type="tel" id="settings-phone" name="phone_number">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings-role">Role</label>
+                                            <select id="settings-role" name="role" disabled>
+                                                <option value="student">Student</option>
+                                                <option value="teacher">Teacher</option>
+                                                <option value="admin">Admin</option>
+                                            </select>
+                                            <small class="form-help">Role cannot be changed</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <span class="toggle-text">Active Account</span>
+                                            <input type="checkbox" id="settings-is-active" name="is_active" class="toggle-input">
+                                        </label>
+                                        <small class="form-help">Account status</small>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-primary" onclick="handleUpdateProfile()">
+                                            <i class="fas fa-save"></i>
+                                            Update Profile
+                                        </button>
+                                        <button type="button" class="btn-secondary" onclick="resetSettingsForm()">
+                                            <i class="fas fa-undo"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h2>Change Password</h2>
+                                <form id="changePasswordForm" class="settings-form">
+                                    <div class="form-group">
+                                        <label for="current-password">Current Password *</label>
+                                        <input type="password" id="current-password" name="current_password" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="new-password">New Password *</label>
+                                            <input type="password" id="new-password" name="new_password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="confirm-password">Confirm New Password *</label>
+                                            <input type="password" id="confirm-password" name="confirm_password" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-primary" onclick="handleChangePassword()">
+                                            <i class="fas fa-key"></i>
+                                            Change Password
+                                        </button>
+                                        <button type="button" class="btn-secondary" onclick="resetPasswordForm()">
+                                            <i class="fas fa-undo"></i>
+                                            Clear
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -564,8 +1873,21 @@
                             <input type="email" id="create-email" name="email" required>
                         </div>
                         <div class="form-group">
+                            <label for="create-password">Password *</label>
+                            <input type="password" id="create-password" name="password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
                             <label for="create-phone">Phone Number</label>
                             <input type="tel" id="create-phone" name="phone_number">
+                        </div>
+                        <div class="form-group">
+                            <label for="create-is-active">
+                                <input type="checkbox" id="create-is-active" name="is_active" checked>
+                                Active
+                            </label>
                         </div>
                     </div>
                     
@@ -649,9 +1971,10 @@
                             <input type="date" id="edit-date-of-birth" name="date_of_birth">
                         </div>
                         <div class="form-group">
-                            <label for="edit-picture">Profile Picture</label>
-                            <input type="file" id="edit-picture" name="picture" accept="image/*">
-                            <small class="file-info">Leave empty to keep current picture</small>
+                            <label for="edit-is-active">
+                                <input type="checkbox" id="edit-is-active" name="is_active" checked>
+                                Active User
+                            </label>
                         </div>
                     </div>
                     
@@ -698,7 +2021,272 @@
         </div>
     </div>
 
-    <script src="{% static 'frontend/script.js' %}"></script>
+    <!-- Create Course Modal -->
+    <div id="createCourseModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Create New Course</h2>
+                <span class="close" onclick="closeCreateCourseModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="createCourseForm">
+                    <div class="form-group">
+                        <label for="create-course-title">Course Title *</label>
+                        <input type="text" id="create-course-title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="create-course-description">Course Description *</label>
+                        <textarea id="create-course-description" name="description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="create-course-image">Course Image</label>
+                        <input type="file" id="create-course-image" name="image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="create-course-active" name="is_active" checked>
+                            Active Course
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Course
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="closeCreateCourseModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Course Modal -->
+    <div id="editCourseModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Edit Course</h2>
+                <span class="close" onclick="closeEditCourseModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editCourseForm">
+                    <input type="hidden" id="edit-course-id" name="course_id">
+                    
+                    <div class="form-group">
+                        <label for="edit-course-title">Course Title *</label>
+                        <input type="text" id="edit-course-title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-course-description">Course Description *</label>
+                        <textarea id="edit-course-description" name="description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-course-image">Course Image</label>
+                        <input type="file" id="edit-course-image" name="image" accept="image/*">
+                        <small class="file-info">Leave empty to keep current image</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="edit-course-active" name="is_active">
+                            Active Course
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i>
+                            Update Course
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="closeEditCourseModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Detail Modal -->
+    <div id="courseDetailModal" class="modal course-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="course-detail-title">Course Details</h2>
+                <span class="close" onclick="closeCourseDetailModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="course-detail-content">
+                    <!-- Course details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Course Confirmation Modal -->
+    <div id="deleteCourseConfirmModal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Confirm Delete</h2>
+                <span class="close" onclick="closeDeleteCourseConfirmModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="delete-confirmation">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <p>Are you sure you want to delete this course?</p>
+                    <p class="user-info" id="delete-course-info"></p>
+                    <p class="warning-text">This action cannot be undone and will delete all lessons.</p>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-danger" id="confirmDeleteCourseBtn">
+                        <i class="fas fa-trash"></i>
+                        Delete Course
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="closeDeleteCourseConfirmModal()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Lesson Modal -->
+    <div id="createLessonModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Create New Lesson</h2>
+                <span class="close" onclick="closeCreateLessonModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="createLessonForm">
+                    <div class="form-group">
+                        <label for="create-lesson-title">Lesson Title *</label>
+                        <input type="text" id="create-lesson-title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="create-lesson-short-description">Short Description *</label>
+                        <textarea id="create-lesson-short-description" name="short_description" rows="2" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="create-lesson-full-text">Full Lesson Text *</label>
+                        <textarea id="create-lesson-full-text" name="full_text" rows="8" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="create-lesson-order">Order</label>
+                        <input type="number" id="create-lesson-order" name="order" min="1" placeholder="Auto-assign">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="create-lesson-image">Lesson Image</label>
+                        <input type="file" id="create-lesson-image" name="image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Lesson
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="closeCreateLessonModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Lesson Modal -->
+    <div id="editLessonModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Edit Lesson</h2>
+                <span class="close" onclick="closeEditLessonModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editLessonForm">
+                    <input type="hidden" id="edit-lesson-id" name="lesson_id">
+                    
+                    <div class="form-group">
+                        <label for="edit-lesson-title">Lesson Title *</label>
+                        <input type="text" id="edit-lesson-title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-lesson-short-description">Short Description *</label>
+                        <textarea id="edit-lesson-short-description" name="short_description" rows="2" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-lesson-full-text">Full Lesson Text *</label>
+                        <textarea id="edit-lesson-full-text" name="full_text" rows="8" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-lesson-order">Order</label>
+                        <input type="number" id="edit-lesson-order" name="order" min="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-lesson-image">Lesson Image</label>
+                        <input type="file" id="edit-lesson-image" name="image" accept="image/*">
+                        <small class="file-info">Leave empty to keep current image</small>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i>
+                            Update Lesson
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="closeEditLessonModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Lesson Confirmation Modal -->
+    <div id="deleteLessonConfirmModal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Confirm Delete</h2>
+                <span class="close" onclick="closeDeleteLessonConfirmModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="delete-confirmation">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <p>Are you sure you want to delete this lesson?</p>
+                    <p class="user-info" id="delete-lesson-info"></p>
+                    <p class="warning-text">This action cannot be undone.</p>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-danger" id="confirmDeleteLessonBtn">
+                        <i class="fas fa-trash"></i>
+                        Delete Lesson
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="closeDeleteLessonConfirmModal()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'frontend/script.js' %}?t={% now "U" %}"></script>
     
     <!-- Fallback basic JavaScript if static file doesn't load -->
     <script>
@@ -745,6 +2333,47 @@
                     }, 100);
                 });
             }
+            
+            // Set up automatic token refresh
+            setInterval(() => {
+                if (authState.isAuthenticated && authState.token && isTokenExpired(authState.token)) {
+                    if (authState.refreshToken) {
+                        refreshAuthToken().catch(() => {
+                            console.log('Token refresh failed, logging out');
+                            logout();
+                        });
+                    } else {
+                        logout();
+                    }
+                }
+            }, 60000); // Check every minute
+            
+            // Set up API interceptor for automatic token refresh
+            const originalFetch = window.fetch;
+            window.fetch = function(url, options = {}) {
+                // Add authorization header if authenticated
+                if (authState.isAuthenticated && authState.token) {
+                    options.headers = {
+                        ...options.headers,
+                        'Authorization': `Bearer ${authState.token}`
+                    };
+                }
+                
+                return originalFetch(url, options).then(response => {
+                    // If 401, try to refresh token and retry
+                    if (response.status === 401 && authState.refreshToken) {
+                        return refreshAuthToken().then(() => {
+                            // Retry the request with new token
+                            options.headers = {
+                                ...options.headers,
+                                'Authorization': `Bearer ${authState.token}`
+                            };
+                            return originalFetch(url, options);
+                        });
+                    }
+                    return response;
+                });
+            };
         });
         
         function navigateTo(pageId) {
@@ -755,13 +2384,300 @@
         }
         
         function showLoginModal() {
-            alert('Login functionality will be implemented. This is a demo interface.');
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.style.display = 'block';
+                
+                // Focus on email input
+                setTimeout(() => {
+                    const emailInput = document.getElementById('email');
+                    if (emailInput) {
+                        emailInput.focus();
+                    }
+                }, 100);
+            }
         }
+        
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.style.display = 'none';
+                
+                // Clear form
+                const form = document.getElementById('loginForm');
+                if (form) {
+                    form.reset();
+                }
+            }
+        }
+        
+        function login(email, password) {
+            const loginData = {
+                email: email,
+                password: password
+            };
+            
+            // For demo purposes, we'll simulate a successful login
+            // In real implementation, this would call your Django authentication API
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate successful login for demo
+                    if (email && password) {
+                        const mockUser = {
+                            id: 1,
+                            first_name: 'Demo',
+                            last_name: 'User',
+                            email: email,
+                            user_role: 'admin'
+                        };
+                        
+                        const mockToken = btoa(JSON.stringify({
+                            user_id: 1,
+                            exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
+                        }));
+                        
+                        const mockRefreshToken = btoa(JSON.stringify({
+                            user_id: 1,
+                            exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) // 1 week
+                        }));
+                        
+                        authState = {
+                            isAuthenticated: true,
+                            user: mockUser,
+                            token: mockToken,
+                            refreshToken: mockRefreshToken
+                        };
+                        
+                        saveAuthState();
+                        updateUserDisplay();
+                        resolve(authState);
+                    } else {
+                        reject(new Error('Invalid credentials'));
+                    }
+                }, 1000);
+                
+                // Real API call would be:
+                // fetch('/api/auth/login/', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(loginData)
+                // })
+                // .then(response => response.json())
+                // .then(data => {
+                //     authState = {
+                //         isAuthenticated: true,
+                //         user: data.user,
+                //         token: data.access_token,
+                //         refreshToken: data.refresh_token
+                //     };
+                //     saveAuthState();
+                //     updateUserDisplay();
+                //     resolve(authState);
+                // })
+                // .catch(reject);
+            });
+        }
+        
+        function logout() {
+            authState = {
+                isAuthenticated: false,
+                user: null,
+                token: null,
+                refreshToken: null
+            };
+            
+            localStorage.removeItem('authState');
+            updateUserDisplay();
+            
+            // Navigate to main page when logging out
+            navigateTo('main');
+            
+            // In real implementation, would call logout API:
+            // fetch('/api/auth/logout/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Authorization': `Bearer ${authState.token}`
+            //     }
+            // });
+            
+            showNotification('Logged out successfully', 'success');
+        }
+        
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdownMenu');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+        
+        function closeUserDropdown() {
+            const dropdown = document.getElementById('userDropdownMenu');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const userDropdown = document.querySelector('.user-dropdown');
+            const dropdownMenu = document.getElementById('userDropdownMenu');
+            
+            if (userDropdown && dropdownMenu && !userDropdown.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+        
+        function refreshAuthToken() {
+            if (!authState.refreshToken) {
+                logout();
+                return Promise.reject('No refresh token');
+            }
+            
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate token refresh for demo
+                    const mockToken = btoa(JSON.stringify({
+                        user_id: authState.user.id,
+                        exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
+                    }));
+                    
+                    authState.token = mockToken;
+                    saveAuthState();
+                    resolve(authState.token);
+                }, 500);
+                
+                // Real API call would be:
+                // fetch('/api/auth/refresh/', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ refresh_token: authState.refreshToken })
+                // })
+                // .then(response => response.json())
+                // .then(data => {
+                //     authState.token = data.access_token;
+                //     saveAuthState();
+                //     resolve(authState.token);
+                // })
+                // .catch(() => {
+                //     logout();
+                //     reject();
+                // });
+            });
+        }
+        
+        // Authentication Management
+        let authState = {
+            isAuthenticated: false,
+            user: null,
+            token: null,
+            refreshToken: null
+        };
         
         // User Management Functions
         let users = []; // Store users data
         
+        // Initialize authentication state
+        function initAuthState() {
+            const savedAuth = localStorage.getItem('authState');
+            if (savedAuth) {
+                try {
+                    authState = JSON.parse(savedAuth);
+                    updateUserDisplay();
+                    
+                    // Check if token is still valid
+                    if (authState.token && isTokenExpired(authState.token)) {
+                        if (authState.refreshToken) {
+                            refreshAuthToken();
+                        } else {
+                            logout();
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error parsing saved auth state:', e);
+                    logout();
+                }
+            }
+        }
+        
+        function isTokenExpired(token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return payload.exp * 1000 < Date.now();
+            } catch (e) {
+                return true;
+            }
+        }
+        
+        function saveAuthState() {
+            localStorage.setItem('authState', JSON.stringify(authState));
+        }
+        
+        function updateUserDisplay() {
+            const userInfoDiv = document.querySelector('.user-info');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (!userInfoDiv) return;
+            
+            if (authState.isAuthenticated && authState.user) {
+                // Add logged-in class to sidebar for menu visibility
+                if (sidebar) {
+                    sidebar.classList.add('logged-in');
+                }
+                
+                userInfoDiv.innerHTML = `
+                    <div class="user-dropdown">
+                        <div class="user-details" onclick="toggleUserDropdown()">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-text">
+                            <div class="user-name">${authState.user.first_name} ${authState.user.last_name}</div>
+                            <div class="user-role">${authState.user.user_role || 'User'}</div>
+                        </div>
+                            <i class="fas fa-chevron-up"></i>
+                    </div>
+                        <div class="dropdown-menu" id="userDropdownMenu">
+                            <a href="#" class="dropdown-item" onclick="navigateTo('settings'); closeUserDropdown();">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </a>
+                            <a href="#" class="dropdown-item" onclick="logout(); closeUserDropdown();">
+                            <i class="fas fa-sign-out-alt"></i>
+                                <span>Log Out</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Remove logged-in class from sidebar
+                if (sidebar) {
+                    sidebar.classList.remove('logged-in');
+                }
+                
+                userInfoDiv.innerHTML = `
+                    <div class="login-prompt">
+                        <button class="btn-login" onclick="showLoginModal()">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Log In
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        function requireAuth(action) {
+            if (!authState.isAuthenticated) {
+                showLoginModal();
+                return false;
+            }
+            return true;
+        }
+        
         function showCreateUserModal() {
+            if (!requireAuth('create user')) {
+                return;
+            }
+            
             const modal = document.getElementById('createUserModal');
             if (modal) {
                 modal.style.display = 'block';
@@ -792,7 +2708,7 @@
         function loadUsers() {
             // For demo purposes, we'll fetch from the API
             // In a real application, this would call your Django API
-            fetch('/api/users/')
+            fetch('/users/')
                 .then(response => response.json())
                 .then(data => {
                     users = data.results || data; // Handle paginated or simple array response
@@ -925,6 +2841,10 @@
         }
         
         function editUser(userId) {
+            if (!requireAuth('edit user')) {
+                return;
+            }
+            
             const user = users.find(u => u.id === userId);
             if (!user) {
                 alert('User not found');
@@ -972,212 +2892,65 @@
         
         let userToDelete = null;
         
-        function deleteUser(userId) {
-            const user = users.find(u => u.id === userId);
-            if (!user) {
-                alert('User not found');
-                return;
-            }
-            
-            userToDelete = user;
-            
-            // Show user info in delete confirmation modal
-            const userInfoElement = document.getElementById('delete-user-info');
-            if (userInfoElement) {
-                userInfoElement.textContent = `${user.first_name} ${user.last_name} (${user.email})`;
-            }
-            
-            // Show delete confirmation modal
-            const modal = document.getElementById('deleteConfirmModal');
-            if (modal) {
-                modal.style.display = 'block';
-            }
-        }
-        
-        function closeDeleteConfirmModal() {
-            const modal = document.getElementById('deleteConfirmModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-            userToDelete = null;
-        }
-        
-        function confirmDeleteUser() {
-            if (!userToDelete) return;
-            
-            const deleteBtn = document.getElementById('confirmDeleteBtn');
-            const originalText = deleteBtn.innerHTML;
-            
-            // Show loading state
-            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
-            deleteBtn.disabled = true;
-            
-            // Simulate API call delay
-            setTimeout(() => {
-                // Remove from local array
-                users = users.filter(user => user.id !== userToDelete.id);
-                
-                // Update display
-                displayUsers(users);
-                updateUserStats();
-                
-                // Close modal
-                closeDeleteConfirmModal();
-                
-                // Reset button
-                deleteBtn.innerHTML = originalText;
-                deleteBtn.disabled = false;
-                
-                // Show success message
-                alert(`User "${userToDelete.first_name} ${userToDelete.last_name}" deleted successfully!`);
-                
-                userToDelete = null;
-                
-                // In real implementation, would call API:
-                // fetch(`/api/users/${userToDelete.id}/`, { method: 'DELETE' })
-            }, 1000);
-        }
+        // User delete functions are handled in script.js
         
         // Handle form submissions and modal events
         document.addEventListener('DOMContentLoaded', function() {
-            // Create user form submission
-            const createUserForm = document.getElementById('createUserForm');
-            if (createUserForm) {
-                createUserForm.addEventListener('submit', function(e) {
+            // Initialize authentication state
+            initAuthState();
+            
+            // Login form submission
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
-                    const formData = new FormData(this);
-                    const userData = {
-                        first_name: formData.get('first_name'),
-                        last_name: formData.get('last_name'),
-                        father_name: formData.get('father_name'),
-                        email: formData.get('email'),
-                        user_role: formData.get('user_role'),
-                        phone_number: formData.get('phone_number'),
-                        date_of_birth: formData.get('date_of_birth'),
-                    };
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
                     
-                    // Validate required fields
-                    if (!userData.first_name || !userData.last_name || !userData.email || !userData.user_role) {
-                        alert('Please fill in all required fields.');
+                    if (!email || !password) {
+                        showNotification('Please enter both email and password', 'error');
                         return;
                     }
                     
                     // Show loading state
                     const submitButton = this.querySelector('button[type="submit"]');
-                    const originalText = submitButton.innerHTML;
-                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+                    const originalText = submitButton.textContent;
+                    submitButton.textContent = 'Logging in...';
                     submitButton.disabled = true;
                     
-                    // Simulate API call
-                    setTimeout(() => {
-                        // Create new user object
-                        const newUser = {
-                            id: Math.max(...users.map(u => u.id), 0) + 1,
-                            ...userData,
-                            created_at: new Date().toISOString()
-                        };
-                        
-                        // Add to users array
-                        users.push(newUser);
-                        
-                        // Update display
-                        displayUsers(users);
-                        updateUserStats();
-                        
-                        // Close modal and reset form
-                        closeCreateUserModal();
-                        
-                        // Reset button
-                        submitButton.innerHTML = originalText;
-                        submitButton.disabled = false;
-                        
-                        // Show success message
-                        alert(`User "${userData.first_name} ${userData.last_name}" created successfully!`);
-                        
-                        // In real implementation, would call API:
-                        // fetch('/api/users/', {
-                        //     method: 'POST',
-                        //     headers: { 'Content-Type': 'application/json' },
-                        //     body: JSON.stringify(userData)
-                        // })
-                    }, 1000);
+                    login(email, password)
+                        .then(() => {
+                            closeLoginModal();
+                            showNotification('Login successful!', 'success');
+                        })
+                        .catch((error) => {
+                            showNotification(error.message || 'Login failed. Please try again.', 'error');
+                        })
+                        .finally(() => {
+                            submitButton.textContent = originalText;
+                            submitButton.disabled = false;
+                        });
                 });
             }
             
-            // Edit user form submission
-            const editUserForm = document.getElementById('editUserForm');
-            if (editUserForm) {
-                editUserForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const formData = new FormData(this);
-                    const userId = parseInt(formData.get('user_id'));
-                    const userData = {
-                        first_name: formData.get('first_name'),
-                        last_name: formData.get('last_name'),
-                        father_name: formData.get('father_name'),
-                        email: formData.get('email'),
-                        user_role: formData.get('user_role'),
-                        phone_number: formData.get('phone_number'),
-                        date_of_birth: formData.get('date_of_birth'),
-                    };
-                    
-                    // Validate required fields
-                    if (!userData.first_name || !userData.last_name || !userData.email || !userData.user_role) {
-                        alert('Please fill in all required fields.');
-                        return;
-                    }
-                    
-                    // Show loading state
-                    const submitButton = this.querySelector('button[type="submit"]');
-                    const originalText = submitButton.innerHTML;
-                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-                    submitButton.disabled = true;
-                    
-                    // Simulate API call
-                    setTimeout(() => {
-                        // Find and update user in array
-                        const userIndex = users.findIndex(u => u.id === userId);
-                        if (userIndex !== -1) {
-                            users[userIndex] = {
-                                ...users[userIndex],
-                                ...userData,
-                                updated_at: new Date().toISOString()
-                            };
-                            
-                            // Update display
-                            displayUsers(users);
-                            updateUserStats();
-                            
-                            // Close modal
-                            closeEditUserModal();
-                            
-                            // Show success message
-                            alert(`User "${userData.first_name} ${userData.last_name}" updated successfully!`);
-                        } else {
-                            alert('User not found');
-                        }
-                        
-                        // Reset button
-                        submitButton.innerHTML = originalText;
-                        submitButton.disabled = false;
-                        
-                        // In real implementation, would call API:
-                        // fetch(`/api/users/${userId}/`, {
-                        //     method: 'PUT',
-                        //     headers: { 'Content-Type': 'application/json' },
-                        //     body: JSON.stringify(userData)
-                        // })
-                    }, 1000);
-                });
-            }
+            // Create user form submission is handled in script.js
             
-            // Delete confirmation button
-            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-            if (confirmDeleteBtn) {
-                confirmDeleteBtn.addEventListener('click', confirmDeleteUser);
-            }
+            // Edit user form submission is handled in script.js
+            
+            // Delete confirmation button is handled in script.js
+            
+            // Course delete confirmation button is handled in script.js
+            
+            // Lesson delete confirmation button is handled in script.js
+            
+            // Note: Create course form submission is handled in script.js
+            
+            // Edit course form submission is handled in script.js
+            
+            // Create lesson form submission is handled in script.js
+            
+            // Edit lesson form submission is handled in script.js
             
             // Close modals when clicking outside
             window.addEventListener('click', function(e) {
@@ -1185,6 +2958,13 @@
                 const createModal = document.getElementById('createUserModal');
                 const editModal = document.getElementById('editUserModal');
                 const deleteModal = document.getElementById('deleteConfirmModal');
+                const createCourseModal = document.getElementById('createCourseModal');
+                const editCourseModal = document.getElementById('editCourseModal');
+                const courseDetailModal = document.getElementById('courseDetailModal');
+                const deleteCourseModal = document.getElementById('deleteCourseConfirmModal');
+                const createLessonModal = document.getElementById('createLessonModal');
+                const editLessonModal = document.getElementById('editLessonModal');
+                const deleteLessonModal = document.getElementById('deleteLessonConfirmModal');
                 
                 if (e.target === loginModal) {
                     closeLoginModal();
@@ -1198,8 +2978,233 @@
                 if (e.target === deleteModal) {
                     closeDeleteConfirmModal();
                 }
+                if (e.target === createCourseModal) {
+                    closeCreateCourseModal();
+                }
+                if (e.target === editCourseModal) {
+                    closeEditCourseModal();
+                }
+                if (e.target === courseDetailModal) {
+                    closeCourseDetailModal();
+                }
+                if (e.target === deleteCourseModal) {
+                    closeDeleteCourseConfirmModal();
+                }
+                if (e.target === createLessonModal) {
+                    closeCreateLessonModal();
+                }
+                if (e.target === editLessonModal) {
+                    closeEditLessonModal();
+                }
+                if (e.target === deleteLessonModal) {
+                    closeDeleteLessonConfirmModal();
+                }
             });
         });
     </script>
+
+    <!-- Event Modals -->
+    <!-- Create Event Modal -->
+    <div id="createEventModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Create Event</h2>
+                <span class="close" onclick="closeCreateEventModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="createEventForm">
+                    <div class="form-group">
+                        <label for="create-event-title">Title *</label>
+                        <input type="text" id="create-event-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="create-event-description">Description</label>
+                        <textarea id="create-event-description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="create-event-date">Date *</label>
+                            <input type="date" id="create-event-date" name="assigned_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="create-event-type">Event Type</label>
+                            <select id="create-event-type" name="event_type">
+                                <option value="meeting">Meeting</option>
+                                <option value="lecture">Lecture</option>
+                                <option value="exam">Exam</option>
+                                <option value="assignment">Assignment</option>
+                                <option value="deadline">Deadline</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="create-event-start-time">Start Time</label>
+                            <input type="time" id="create-event-start-time" name="start_time">
+                        </div>
+                        <div class="form-group">
+                            <label for="create-event-end-time">End Time</label>
+                            <input type="time" id="create-event-end-time" name="end_time">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="create-event-priority">Priority</label>
+                            <select id="create-event-priority" name="priority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="create-event-location">Location</label>
+                            <input type="text" id="create-event-location" name="location">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-label">
+                            <span class="toggle-text">All Day Event</span>
+                            <input type="checkbox" id="create-event-all-day" name="is_all_day" class="toggle-input" onchange="toggleTimeFields('create')">
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-primary" onclick="handleCreateEvent()">
+                            Create Event
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="closeCreateEventModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Event Modal -->
+    <div id="editEventModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Edit Event</h2>
+                <span class="close" onclick="closeEditEventModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editEventForm">
+                    <input type="hidden" id="edit-event-id" name="id">
+                    <div class="form-group">
+                        <label for="edit-event-title">Title *</label>
+                        <input type="text" id="edit-event-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-event-description">Description</label>
+                        <textarea id="edit-event-description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-event-date">Date *</label>
+                            <input type="date" id="edit-event-date" name="assigned_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-event-type">Event Type</label>
+                            <select id="edit-event-type" name="event_type">
+                                <option value="meeting">Meeting</option>
+                                <option value="lecture">Lecture</option>
+                                <option value="exam">Exam</option>
+                                <option value="assignment">Assignment</option>
+                                <option value="deadline">Deadline</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-event-start-time">Start Time</label>
+                            <input type="time" id="edit-event-start-time" name="start_time">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-event-end-time">End Time</label>
+                            <input type="time" id="edit-event-end-time" name="end_time">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-event-priority">Priority</label>
+                            <select id="edit-event-priority" name="priority">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-event-location">Location</label>
+                            <input type="text" id="edit-event-location" name="location">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-label">
+                            <span class="toggle-text">All Day Event</span>
+                            <input type="checkbox" id="edit-event-all-day" name="is_all_day" class="toggle-input" onchange="toggleTimeFields('edit')">
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-primary" onclick="handleUpdateEvent()">
+                            Update Event
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="closeEditEventModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day Events Modal -->
+    <div id="dayEventsModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="day-events-title">Events for Today</h2>
+                <span class="close" onclick="closeDayEventsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="day-events-actions">
+                    <button class="btn-primary" onclick="showCreateEventModal()">
+                        <i class="fas fa-plus"></i>
+                        Create Event
+                    </button>
+                </div>
+                <div id="day-events-list" class="events-list">
+                    <!-- Events will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Event Confirmation Modal -->
+    <div id="deleteEventConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Event</h2>
+                <span class="close" onclick="closeDeleteEventConfirmModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this event?</p>
+                <div class="event-preview" id="delete-event-preview">
+                    <!-- Event details will be shown here -->
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-danger" id="confirmDeleteEventBtn">
+                        Delete Event
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="closeDeleteEventConfirmModal()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
