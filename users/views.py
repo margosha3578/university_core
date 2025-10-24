@@ -328,8 +328,8 @@ def api_change_password(request):
 def api_users_list(request):
     """API endpoint to list users"""
     logger.info(f"Users list accessed by: {request.user.email} (Role: {request.user.user_role})")
-    # Only admin can see all users
-    if request.user.user_role != 'admin':
+    # Students, professors, and admins can see all users
+    if request.user.user_role not in ['admin', 'professor', 'student']:
         logger.warning(f"Unauthorized users list access attempt by: {request.user.email}")
         return JsonResponse({
             'error': 'Permission denied'
@@ -375,8 +375,8 @@ def api_users_list(request):
 def api_user_detail(request, user_id):
     """API endpoint to get user details"""
     logger.info(f"User detail accessed: User ID {user_id} by {request.user.email}")
-    # Only admin can see other users' details
-    if request.user.user_role != 'admin' and request.user.id != user_id:
+    # Students, professors, and admins can see user details
+    if request.user.user_role not in ['admin', 'professor', 'student']:
         logger.warning(f"Unauthorized user detail access attempt: User ID {user_id} by {request.user.email}")
         return JsonResponse({
             'error': 'Permission denied'

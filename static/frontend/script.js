@@ -1,3 +1,50 @@
+// Helper function to safely parse JSON responses
+function safeJsonResponse(response) {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+    }
+    
+    return response.json();
+}
+
+// Helper function to safely parse JSON responses with error handling
+function safeJsonResponseWithErrorHandling(response) {
+    // Check if response is a valid Response object
+    if (!response || typeof response.text !== 'function') {
+        throw new Error('Invalid response object');
+    }
+    
+    if (!response.ok) {
+        // Try to get error message from response, but handle cases where response methods might fail
+        try {
+            return response.text().then(text => {
+                try {
+                    const errData = JSON.parse(text);
+                    throw new Error(errData.error || `HTTP error! status: ${response.status}`);
+                } catch (parseError) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            });
+        } catch (error) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    }
+    
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+    }
+    
+    return response.json();
+}
+
 // University Portal Frontend JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -10,6 +57,10 @@ function initializeApp() {
     
     // Initialize modals
     initModals();
+    
+    // Initialize authentication-based visibility
+    updateNavigationVisibility();
+    updateUserVisibility();
     
     // Initialize user display
     updateUserDisplay();
@@ -38,12 +89,32 @@ function initNavigation() {
 }
 
 function navigateTo(pageId) {
+    // Check if the page requires authentication
+    const targetNavItem = document.querySelector(`[data-page="${pageId}"]`).closest('.nav-item');
+    if (targetNavItem && targetNavItem.classList.contains('auth-required')) {
+        const savedAuth = localStorage.getItem('authState');
+        let isAuthenticated = false;
+        
+        if (savedAuth) {
+            try {
+                const authState = JSON.parse(savedAuth);
+                isAuthenticated = authState.isAuthenticated;
+            } catch (e) {
+                console.error('Error parsing saved auth state:', e);
+            }
+        }
+        
+        if (!isAuthenticated) {
+            showNotification('Please log in to access this page', 'error');
+            return;
+        }
+    }
+    
     // Remove active class from all nav items
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => item.classList.remove('active'));
     
     // Add active class to clicked nav item
-    const targetNavItem = document.querySelector(`[data-page="${pageId}"]`).closest('.nav-item');
     if (targetNavItem) {
         targetNavItem.classList.add('active');
     }
@@ -95,6 +166,20 @@ function loadPageContent(pageId) {
 
 // Placeholder content loaders
 function loadUsersContent() {
+    // Show loading spinner immediately
+    const usersTableBody = document.getElementById('users-table-body');
+    if (usersTableBody) {
+        usersTableBody.innerHTML = `
+            <tr class="loading-state">
+                <td colspan="6" class="text-center">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading users...</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
     loadUsers();
 }
 
@@ -191,11 +276,25 @@ function toggleUserMenu(userId) {
     document.querySelectorAll('.user-dropdown-menu').forEach(m => {
         if (m !== menu) {
             m.classList.remove('show');
+            m.classList.remove('position-above');
         }
     });
     
     // Toggle current menu
     menu.classList.toggle('show');
+    
+    if (menu.classList.contains('show')) {
+        // Check if dropdown would go off-screen
+        const rect = menu.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        // If dropdown would go below viewport, position it above
+        if (rect.bottom > viewportHeight - 20) {
+            menu.classList.add('position-above');
+        } else {
+            menu.classList.remove('position-above');
+        }
+    }
 }
 
 // Close user menus when clicking outside
@@ -203,6 +302,7 @@ document.addEventListener('click', function(e) {
     if (!e.target.closest('.user-menu-container')) {
         document.querySelectorAll('.user-dropdown-menu').forEach(menu => {
             menu.classList.remove('show');
+            menu.classList.remove('position-above');
         });
     }
 });
@@ -255,6 +355,55 @@ function updateUserVisibility() {
             createUserBtn.style.display = 'flex';
         } else {
             createUserBtn.style.display = 'none';
+        }
+    }
+}
+
+function updateNavigationVisibility() {
+    // Check if user is authenticated
+    const savedAuth = localStorage.getItem('authState');
+    let isAuthenticated = false;
+    
+    if (savedAuth) {
+        try {
+            const authState = JSON.parse(savedAuth);
+            isAuthenticated = authState.isAuthenticated;
+        } catch (e) {
+            console.error('Error parsing saved auth state:', e);
+        }
+    }
+    
+    // Show/hide navigation items that require authentication
+    const navItems = document.querySelectorAll('.nav-item.auth-required');
+    navItems.forEach(item => {
+        if (isAuthenticated) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Show/hide dashboard cards that require authentication
+    const dashboardCards = document.querySelectorAll('.dashboard-card.auth-required');
+    dashboardCards.forEach(card => {
+        if (isAuthenticated) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Show/hide welcome section and dashboard section
+    const welcomeSection = document.getElementById('welcome-section');
+    const dashboardSection = document.getElementById('dashboard-section');
+    
+    if (welcomeSection && dashboardSection) {
+        if (isAuthenticated) {
+            welcomeSection.style.display = 'none';
+            dashboardSection.style.display = 'block';
+        } else {
+            welcomeSection.style.display = 'block';
+            dashboardSection.style.display = 'none';
         }
     }
 }
@@ -366,12 +515,6 @@ function editUser(userId) {
 function loadUserDetail(userId) {
     makeAuthenticatedRequest(`/users/${userId}/`, {
         method: 'GET'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
     })
     .then(data => {
         if (data.success && data.user) {
@@ -498,12 +641,6 @@ function handleUpdateUser(e) {
         method: 'PUT',
         body: JSON.stringify(userData)
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
     .then(data => {
         // Reset button
         submitButton.textContent = originalText;
@@ -566,6 +703,14 @@ function closeDeleteConfirmModal() {
     if (modal) {
         modal.style.display = 'none';
     }
+    
+    // Reset button state
+    const deleteBtn = document.getElementById('confirmDeleteBtn');
+    if (deleteBtn) {
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete User';
+        deleteBtn.disabled = false;
+    }
+    
     userToDelete = null;
 }
 
@@ -583,12 +728,6 @@ function confirmDeleteUser() {
     // Make authenticated API call to delete user
     makeAuthenticatedRequest(`/users/${userToDelete.id}/delete/`, {
             method: 'DELETE'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
         })
         .then(data => {
             if (data.success) {
@@ -720,16 +859,6 @@ function handleCreateUser(e) {
     makeAuthenticatedRequest('/users/create/', {
         method: 'POST',
         body: JSON.stringify(userData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errData => {
-                throw new Error(errData.error || `HTTP error! status: ${response.status}`);
-            }).catch(() => {
-            throw new Error(`HTTP error! status: ${response.status}`);
-            });
-        }
-        return response.json();
     })
     .then(data => {
         // Reset button
@@ -980,6 +1109,8 @@ function handleLogin(e) {
             // Update UI
             updateUserDisplay();
             updateMainPageContent();
+            updateNavigationVisibility();
+            updateUserVisibility();
             
             // Close modal and show success
             closeLoginModal();
@@ -1007,6 +1138,8 @@ function logout() {
     // Update UI to show logged out state
     updateUserDisplay();
     updateMainPageContent();
+    updateNavigationVisibility();
+    updateUserVisibility();
     
     // Navigate to main page
     navigateTo('main');
@@ -1057,7 +1190,7 @@ function refreshAccessToken() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh_token: refreshToken })
     })
-    .then(response => response.json())
+    .then(safeJsonResponse)
     .then(data => {
         if (data.success && data.access_token) {
             // Update stored access token
@@ -1109,44 +1242,11 @@ function makeAuthenticatedRequest(url, options = {}) {
                 });
         }
         
-        // Handle other HTTP errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        // Parse JSON response
-        return response.json();
+        // Use safe JSON response handler
+        return safeJsonResponse(response);
     });
 }
 
-// User dropdown functionality
-function toggleUserDropdown() {
-    const dropdown = document.getElementById('userDropdownMenu');
-    const chevron = document.querySelector('.user-details i.fa-chevron-up');
-    
-    if (dropdown) {
-        dropdown.classList.toggle('show');
-        
-        // Rotate chevron icon
-        if (chevron) {
-            chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
-        }
-    }
-}
-
-function closeUserDropdown() {
-    const dropdown = document.getElementById('userDropdownMenu');
-    const chevron = document.querySelector('.user-details i.fa-chevron-up');
-    
-    if (dropdown) {
-        dropdown.classList.remove('show');
-        
-        // Reset chevron icon
-        if (chevron) {
-            chevron.style.transform = 'rotate(0deg)';
-        }
-    }
-}
 
 // Update user display and menu visibility
 function updateUserDisplay() {
@@ -1181,26 +1281,13 @@ function updateUserDisplay() {
         }
         
         userInfoDiv.innerHTML = `
-            <div class="user-dropdown">
-                <div class="user-details" onclick="toggleUserDropdown()">
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-text">
-                        <div class="user-name">${user.first_name} ${user.last_name}</div>
-                        <div class="user-role">${user.user_role || 'User'}</div>
-                    </div>
-                    <i class="fas fa-chevron-up"></i>
+            <div class="user-details">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
                 </div>
-                <div class="dropdown-menu" id="userDropdownMenu">
-                    <a href="#" class="dropdown-item" onclick="navigateTo('settings'); closeUserDropdown();">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                    <a href="#" class="dropdown-item" onclick="logout(); closeUserDropdown();">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Log Out</span>
-                    </a>
+                <div class="user-text">
+                    <div class="user-name">${user.first_name} ${user.last_name}</div>
+                    <div class="user-role">${user.user_role || 'User'}</div>
                 </div>
             </div>
         `;
@@ -1260,21 +1347,6 @@ function updateMainPageContent() {
     }
 }
 
-// Close dropdown when clicking outside
-document.addEventListener('click', function(e) {
-    const userDropdown = document.querySelector('.user-dropdown');
-    const dropdownMenu = document.getElementById('userDropdownMenu');
-    const chevron = document.querySelector('.user-details i.fa-chevron-up');
-    
-    if (userDropdown && dropdownMenu && !userDropdown.contains(e.target)) {
-        dropdownMenu.classList.remove('show');
-        
-        // Reset chevron icon
-        if (chevron) {
-            chevron.style.transform = 'rotate(0deg)';
-        }
-    }
-});
 
 // Utility functions
 function formatDate(dateString) {
@@ -1599,10 +1671,7 @@ function displayCourses(coursesToShow = courses) {
     coursesGrid.innerHTML = coursesToShow.map(course => `
         <div class="course-card" onclick="navigateToCourse(${course.id})">
             <div class="course-card-header">
-                ${course.image_url ? 
-                    `<img src="${course.image_url}" alt="${course.title}" class="course-card-image">` :
-                    `<div style="font-size: 48px;"><i class="fas fa-book"></i></div>`
-                }
+                <div style="font-size: 48px;"><i class="fas fa-book"></i></div>
                 <div class="course-menu-container auth-required" style="display: none;">
                     <button class="course-menu-btn" onclick="event.stopPropagation(); toggleCourseMenu(${course.id})" title="More options">
                         <i class="fas fa-ellipsis-v"></i>
@@ -1908,6 +1977,14 @@ function closeDeleteCourseConfirmModal() {
     if (modal) {
         modal.style.display = 'none';
     }
+    
+    // Reset button state
+    const deleteBtn = document.getElementById('confirmDeleteCourseBtn');
+    if (deleteBtn) {
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Course';
+        deleteBtn.disabled = false;
+    }
+    
     courseToDelete = null;
 }
 
@@ -1925,12 +2002,6 @@ function confirmDeleteCourse() {
     // Make authenticated API call to delete course
     makeAuthenticatedRequest(`/courses/${courseToDelete.id}/delete/`, {
         method: 'DELETE'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
     })
     .then(data => {
         if (data.success) {
@@ -1987,13 +2058,6 @@ function showCourseDetailPage() {
     document.getElementById('course-info-date').textContent = `Created: ${formatDate(currentCourse.created_at)}`;
     document.getElementById('course-info-description-text').textContent = currentCourse.description;
     
-    // Update course image
-    const imagePlaceholder = document.getElementById('course-info-image-placeholder');
-    if (currentCourse.image_url) {
-        imagePlaceholder.innerHTML = `<img src="${currentCourse.image_url}" alt="${currentCourse.title}">`;
-    } else {
-        imagePlaceholder.innerHTML = '<i class="fas fa-book"></i>';
-    }
     
     // Navigate to course detail page
     showPage('course-detail');
@@ -2476,6 +2540,14 @@ function closeDeleteLessonConfirmModal() {
     if (modal) {
         modal.style.display = 'none';
     }
+    
+    // Reset button state
+    const deleteBtn = document.getElementById('confirmDeleteLessonBtn');
+    if (deleteBtn) {
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Lesson';
+        deleteBtn.disabled = false;
+    }
+    
     lessonToDelete = null;
 }
 
@@ -2494,15 +2566,9 @@ function confirmDeleteLesson() {
     makeAuthenticatedRequest(`/courses/lessons/${lessonToDelete.id}/delete/`, {
         method: 'DELETE'
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
     .then(data => {
         if (data.success) {
-            // Close modal
+            // Close modal (this will reset button state)
             closeDeleteLessonConfirmModal();
             
             // Show success message
@@ -2745,7 +2811,6 @@ function populateSettingsForm(user) {
     document.getElementById('settings-email').value = user.email || '';
     document.getElementById('settings-phone').value = user.phone_number || '';
     document.getElementById('settings-role').value = user.role || 'student';
-    document.getElementById('settings-is-active').checked = user.is_active || false;
 }
 
 // Handle profile update
@@ -2759,8 +2824,7 @@ function handleUpdateProfile() {
         last_name: formData.get('last_name'),
         father_name: formData.get('father_name'),
         date_of_birth: formData.get('date_of_birth'),
-        phone_number: formData.get('phone_number'),
-        is_active: document.getElementById('settings-is-active').checked
+        phone_number: formData.get('phone_number')
     };
     
     // Basic validation
@@ -3280,6 +3344,13 @@ function closeDeleteEventConfirmModal() {
     const modal = document.getElementById('deleteEventConfirmModal');
     if (modal) {
         modal.style.display = 'none';
+    }
+    
+    // Reset button state
+    const deleteBtn = document.getElementById('confirmDeleteEventBtn');
+    if (deleteBtn) {
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Event';
+        deleteBtn.disabled = false;
     }
 }
 

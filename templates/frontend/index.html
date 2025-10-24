@@ -78,10 +78,6 @@
             opacity: 0.7;
         }
         
-        .dropdown-menu.show + .user-details i.fa-chevron-up,
-        .user-dropdown:has(.dropdown-menu.show) .user-details i.fa-chevron-up {
-            transform: rotate(180deg);
-        }
         
         .user-avatar {
             width: 40px;
@@ -119,9 +115,6 @@
             text-transform: capitalize;
         }
         
-        .user-dropdown {
-            position: relative;
-        }
         
         .dropdown-menu {
             position: absolute;
@@ -352,9 +345,23 @@
             z-index: 1000;
         }
         
+        /* Smart positioning for dropdown menus */
         .user-dropdown-menu.show {
             opacity: 1;
             visibility: visible;
+            transform: translateY(0);
+        }
+        
+        /* Position dropdown above button if it would go off-screen */
+        .user-dropdown-menu.show.position-above {
+            top: auto;
+            bottom: 100%;
+            margin-top: 0;
+            margin-bottom: 8px;
+            transform: translateY(10px);
+        }
+        
+        .user-dropdown-menu.show.position-above {
             transform: translateY(0);
         }
         
@@ -394,11 +401,6 @@
             background-color: #FEE2E2;
         }
         
-        .course-card-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
         
         .course-card-content {
             padding: 20px;
@@ -530,24 +532,6 @@
             color: white;
         }
         
-        .course-info-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 12px;
-            margin-right: 24px;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-        }
-        
-        .course-info-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
-        }
         
         .course-info-details {
             flex: 1;
@@ -713,6 +697,188 @@
             background-color: #4B5563;
             transform: translateY(-1px);
         }
+        
+        .welcome-section {
+            min-height: 70vh;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+            border-radius: 20px;
+            margin: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .welcome-content {
+            text-align: center;
+            color: #1F2937;
+            max-width: 800px;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .welcome-header {
+            margin-bottom: 60px;
+        }
+        
+        .welcome-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 40px auto;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .welcome-icon:hover {
+            transform: scale(1.05);
+        }
+        
+        .welcome-icon i {
+            font-size: 50px;
+            color: white;
+        }
+        
+        .welcome-text h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            color: #1F2937;
+            line-height: 1.2;
+        }
+        
+        .welcome-subtitle {
+            font-size: 20px;
+            margin: 0 0 40px 0;
+            color: #6B7280;
+            line-height: 1.5;
+            font-weight: 400;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .welcome-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .feature-item {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+            color: #4F46E5;
+        }
+        
+        .feature-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .welcome-actions {
+            margin-top: 50px;
+        }
+        
+        .btn-login-main {
+            background-color: #4F46E5;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+        
+        .btn-login-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+            background-color: #4338CA;
+        }
+        
+        .btn-login-main i {
+            margin-right: 12px;
+            font-size: 22px;
+        }
+        
+        /* Subtle background elements */
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            right: 10%;
+            width: 60px;
+            height: 60px;
+            background: rgba(79, 70, 229, 0.05);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .welcome-section::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            left: 15%;
+            width: 40px;
+            height: 40px;
+            background: rgba(79, 70, 229, 0.03);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .btn-login-main {
+            background-color: white;
+            color: #667eea;
+            font-weight: 600;
+            padding: 16px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-login-main:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-login-main i {
+            font-size: 20px;
+        }
         .main-content { flex: 1; margin-left: 280px; background-color: #fbfbfb; min-height: 100vh; }
         .content-wrapper { padding: 30px; max-width: 1200px; margin: 0 auto; }
         .page-content { display: none; }
@@ -788,7 +954,7 @@
         .stat-number { font-size: 24px; font-weight: 700; color: #1F2937; }
         .stat-label { font-size: 14px; color: #6B7280; }
         
-        .users-table-container { background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); border: 1px solid #E5E7EB; overflow: hidden; }
+        .users-table-container { background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); border: 1px solid #E5E7EB; }
         .table-header { padding: 20px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; }
         .table-header h3 { font-size: 18px; font-weight: 600; color: #1F2937; }
         .table-actions { display: flex; gap: 12px; align-items: center; }
@@ -797,16 +963,31 @@
         .search-box input { padding: 8px 12px 8px 36px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; width: 200px; }
         #role-filter { padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; }
         
-        .table-wrapper { overflow-x: auto; }
         .users-table { width: 100%; border-collapse: collapse; }
         .users-table th, .users-table td { padding: 12px 20px; text-align: left; border-bottom: 1px solid #E5E7EB; }
         .users-table th { background-color: #F9FAFB; font-weight: 600; color: #374151; font-size: 14px; }
         .users-table td { font-size: 14px; color: #1F2937; }
         .users-table tbody tr:hover { background-color: #F9FAFB; }
+        
+        /* Responsive table behavior */
+        @media (max-width: 768px) {
+            .users-table th, .users-table td { 
+                padding: 8px 12px; 
+                font-size: 13px;
+            }
+            .users-table th:nth-child(4), 
+            .users-table td:nth-child(4) { 
+                display: none; /* Hide phone column on mobile */
+            }
+        }
         .text-center { text-align: center; }
         .empty-state { padding: 40px; }
         .empty-state i { font-size: 48px; color: #9CA3AF; margin-bottom: 16px; }
         .empty-state p { color: #6B7280; margin-bottom: 16px; }
+        
+        .loading-spinner { padding: 40px; }
+        .loading-spinner i { font-size: 32px; color: #4F46E5; margin-bottom: 16px; }
+        .loading-spinner p { color: #6B7280; margin: 0; }
         
         .user-role-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; text-transform: capitalize; }
         .role-student { background-color: #ECFDF5; color: #047857; }
@@ -822,10 +1003,92 @@
         /* Modal Enhancements */
         .modal-large { max-width: 600px; }
         .modal-small { max-width: 400px; }
+        
+        /* Day Events Modal - Larger size for better event display */
+        #dayEventsModal .modal-content {
+            max-width: 700px;
+            max-height: 80vh;
+        }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .form-group select { width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; }
-        .form-group input[type="file"] { padding: 8px; }
-        .file-info { font-size: 12px; color: #6B7280; margin-top: 4px; display: block; }
+        /* Toggle Switch Styles */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #374151;
+            margin: 0;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #4F46E5;
+        }
+        
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .toggle-switch input:focus + .toggle-slider {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .toggle-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .toggle-help {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 4px;
+        }
         
         /* Form Actions */
         .form-actions {
@@ -882,6 +1145,41 @@
             font-weight: 600;
         }
         
+        .btn-logout-settings {
+            background-color: #DC2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-logout-settings:hover {
+            background-color: #B91C1C;
+            transform: translateY(-1px);
+        }
+        
+        .account-actions {
+            padding: 16px 0;
+        }
+        
+        .action-description {
+            margin-bottom: 20px;
+        }
+        
+        .action-description p {
+            color: #6B7280;
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
         .settings-form {
             display: flex;
             flex-direction: column;
@@ -934,6 +1232,84 @@
             .search-box input { width: 100%; }
             .form-row { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr; }
+            
+            .welcome-section {
+                min-height: 60vh;
+                margin: 10px;
+            }
+            
+            .welcome-content {
+                padding: 20px 15px;
+            }
+            
+            .welcome-header {
+                margin-bottom: 30px;
+            }
+            
+            .welcome-icon {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 20px;
+            }
+            
+            .welcome-icon i {
+                font-size: 40px;
+            }
+            
+            .welcome-text h1 {
+                font-size: 36px;
+                margin-bottom: 16px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 18px;
+                margin-bottom: 30px;
+            }
+            
+            .welcome-features {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin: 30px 0;
+            }
+            
+            .feature-item {
+                padding: 20px;
+            }
+            
+            .feature-icon {
+                font-size: 24px;
+            }
+            
+            .btn-login-main {
+                padding: 14px 28px;
+                font-size: 16px;
+            }
+            
+            .toggle-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .toggle-label {
+                gap: 8px;
+            }
+            
+            .toggle-switch {
+                width: 44px;
+                height: 22px;
+            }
+            
+            .toggle-slider:before {
+                height: 16px;
+                width: 16px;
+                left: 3px;
+                bottom: 3px;
+            }
+            
+            .toggle-switch input:checked + .toggle-slider:before {
+                transform: translateX(22px);
+            }
         }
 
         /* Calendar Styles */
@@ -1073,6 +1449,36 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        
+        .events-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .events-list::-webkit-scrollbar-track {
+            background: #F3F4F6;
+            border-radius: 3px;
+        }
+        
+        .events-list::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 3px;
+        }
+        
+        /* Responsive adjustments for events modal */
+        @media (max-width: 768px) {
+            #dayEventsModal .modal-content {
+                max-width: 95%;
+                max-height: 90vh;
+                margin: 5% auto;
+            }
+            
+            .events-list {
+                max-height: 300px;
+            }
         }
 
         .event-item {
@@ -1282,7 +1688,7 @@
                             <span>Users</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item auth-required">
                         <a href="#" class="nav-link" data-page="courses">
                             <i class="fas fa-book"></i>
                             <span>Courses</span>
@@ -1320,12 +1726,58 @@
             <div class="content-wrapper">
                 <!-- Main Page Content -->
                 <div id="main-page" class="page-content active">
-                    <header class="page-header">
-                        <h1>Welcome to University Portal</h1>
-                        <p class="page-subtitle" id="main-subtitle">Your central hub for academic and administrative activities</p>
-                    </header>
+                    <!-- Welcome Section for Unauthorized Users -->
+                    <div class="welcome-section" id="welcome-section">
+                        <div class="welcome-content">
+                            <div class="welcome-header">
+                                <div class="welcome-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="welcome-text">
+                                    <h1>Welcome to University Portal</h1>
+                                    <p class="welcome-subtitle">Access your academic world with our comprehensive university management system</p>
+                                </div>
+                            </div>
+                            
+                            <div class="welcome-features">
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div class="feature-text">Course Management</div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="feature-text">Student Portal</div>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <div class="feature-text">Schedule Events</div>
+                                </div>
+                            </div>
+                            
+                            <div class="welcome-actions">
+                                <button class="btn-primary btn-login-main" onclick="showLoginModal()">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Login to Portal
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <div class="dashboard-grid">
+                    <!-- Dashboard for Authenticated Users -->
+                    <div class="dashboard-section auth-required" id="dashboard-section" style="display: none;">
+                        <header class="page-header">
+                            <h1>Welcome to University Portal</h1>
+                            <p class="page-subtitle" id="main-subtitle">Your central hub for academic and administrative activities</p>
+                        </header>
+                        
+                        <div class="dashboard-grid">
+                        
                         <div class="dashboard-card auth-required">
                             <div class="card-icon">
                                 <i class="fas fa-users"></i>
@@ -1337,7 +1789,7 @@
                             </div>
                         </div>
                         
-                        <div class="dashboard-card">
+                        <div class="dashboard-card auth-required">
                             <div class="card-icon">
                                 <i class="fas fa-book"></i>
                             </div>
@@ -1358,6 +1810,7 @@
                                 <p>View and manage class schedules and timetables</p>
                                 <button class="btn-primary" onclick="navigateTo('schedule')">View Schedule</button>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -1450,15 +1903,6 @@
                                     </thead>
                                     <tbody id="users-table-body">
                                         <!-- Users will be loaded here -->
-                                        <tr class="no-users">
-                                            <td colspan="6" class="text-center">
-                                                <div class="empty-state">
-                                                    <i class="fas fa-users"></i>
-                                                    <p>No users found</p>
-                                                    <button class="btn-primary" onclick="showCreateUserModal()">Create First User</button>
-                                                </div>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -1579,11 +2023,6 @@
                         <!-- Course Information Card -->
                         <div class="course-info-card">
                             <div class="course-info-header">
-                                <div class="course-info-image">
-                                    <div id="course-info-image-placeholder">
-                                        <i class="fas fa-book"></i>
-                                    </div>
-                                </div>
                                 <div class="course-info-details">
                                     <h2 id="course-info-title">Course Title</h2>
                                     <div class="course-info-meta">
@@ -1749,13 +2188,6 @@
                                             <small class="form-help">Role cannot be changed</small>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="checkbox-label">
-                                            <span class="toggle-text">Active Account</span>
-                                            <input type="checkbox" id="settings-is-active" name="is_active" class="toggle-input">
-                                        </label>
-                                        <small class="form-help">Account status</small>
-                                    </div>
                                     <div class="form-actions">
                                         <button type="button" class="btn-primary" onclick="handleUpdateProfile()">
                                             <i class="fas fa-save"></i>
@@ -1797,6 +2229,21 @@
                                         </button>
                                     </div>
                                 </form>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h2>Account Actions</h2>
+                                <div class="account-actions">
+                                    <div class="action-description">
+                                        <p>Sign out of your account to end your current session.</p>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-logout-settings" onclick="logout()">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            Logout
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1884,10 +2331,16 @@
                             <input type="tel" id="create-phone" name="phone_number">
                         </div>
                         <div class="form-group">
-                            <label for="create-is-active">
-                                <input type="checkbox" id="create-is-active" name="is_active" checked>
-                                Active
-                            </label>
+                            <div class="toggle-container">
+                                <label class="toggle-label">
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="create-is-active" name="is_active" checked>
+                                        <span class="toggle-slider"></span>
+                                    </div>
+                                    <span class="toggle-text">Active User</span>
+                                </label>
+                            </div>
+                            <div class="toggle-help">User account status</div>
                         </div>
                     </div>
                     
@@ -1895,10 +2348,6 @@
                         <div class="form-group">
                             <label for="create-date-of-birth">Date of Birth</label>
                             <input type="date" id="create-date-of-birth" name="date_of_birth">
-                        </div>
-                        <div class="form-group">
-                            <label for="create-picture">Profile Picture</label>
-                            <input type="file" id="create-picture" name="picture" accept="image/*">
                         </div>
                     </div>
                     
@@ -1971,10 +2420,16 @@
                             <input type="date" id="edit-date-of-birth" name="date_of_birth">
                         </div>
                         <div class="form-group">
-                            <label for="edit-is-active">
-                                <input type="checkbox" id="edit-is-active" name="is_active" checked>
-                                Active User
-                            </label>
+                            <div class="toggle-container">
+                                <label class="toggle-label">
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="edit-is-active" name="is_active" checked>
+                                        <span class="toggle-slider"></span>
+                                    </div>
+                                    <span class="toggle-text">Active User</span>
+                                </label>
+                            </div>
+                            <div class="toggle-help">User account status</div>
                         </div>
                     </div>
                     
@@ -2040,16 +2495,18 @@
                         <textarea id="create-course-description" name="description" rows="4" required></textarea>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="create-course-image">Course Image</label>
-                        <input type="file" id="create-course-image" name="image" accept="image/*">
-                    </div>
                     
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="create-course-active" name="is_active" checked>
-                            Active Course
-                        </label>
+                        <div class="toggle-container">
+                            <label class="toggle-label">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="create-course-active" name="is_active" checked>
+                                    <span class="toggle-slider"></span>
+                                </div>
+                                <span class="toggle-text">Active Course</span>
+                            </label>
+                        </div>
+                        <div class="toggle-help">Course availability status</div>
                     </div>
                     
                     <div class="form-actions">
@@ -2087,17 +2544,18 @@
                         <textarea id="edit-course-description" name="description" rows="4" required></textarea>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="edit-course-image">Course Image</label>
-                        <input type="file" id="edit-course-image" name="image" accept="image/*">
-                        <small class="file-info">Leave empty to keep current image</small>
-                    </div>
                     
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="edit-course-active" name="is_active">
-                            Active Course
-                        </label>
+                        <div class="toggle-container">
+                            <label class="toggle-label">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="edit-course-active" name="is_active">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                                <span class="toggle-text">Active Course</span>
+                            </label>
+                        </div>
+                        <div class="toggle-help">Course availability status</div>
                     </div>
                     
                     <div class="form-actions">
@@ -2187,10 +2645,6 @@
                         <input type="number" id="create-lesson-order" name="order" min="1" placeholder="Auto-assign">
                     </div>
                     
-                    <div class="form-group">
-                        <label for="create-lesson-image">Lesson Image</label>
-                        <input type="file" id="create-lesson-image" name="image" accept="image/*">
-                    </div>
                     
                     <div class="form-actions">
                         <button type="submit" class="btn-primary">
@@ -2237,11 +2691,6 @@
                         <input type="number" id="edit-lesson-order" name="order" min="1">
                     </div>
                     
-                    <div class="form-group">
-                        <label for="edit-lesson-image">Lesson Image</label>
-                        <input type="file" id="edit-lesson-image" name="image" accept="image/*">
-                        <small class="file-info">Leave empty to keep current image</small>
-                    </div>
                     
                     <div class="form-actions">
                         <button type="submit" class="btn-primary">
@@ -2503,29 +2952,6 @@
             showNotification('Logged out successfully', 'success');
         }
         
-        function toggleUserDropdown() {
-            const dropdown = document.getElementById('userDropdownMenu');
-            if (dropdown) {
-                dropdown.classList.toggle('show');
-            }
-        }
-        
-        function closeUserDropdown() {
-            const dropdown = document.getElementById('userDropdownMenu');
-            if (dropdown) {
-                dropdown.classList.remove('show');
-            }
-        }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const userDropdown = document.querySelector('.user-dropdown');
-            const dropdownMenu = document.getElementById('userDropdownMenu');
-            
-            if (userDropdown && dropdownMenu && !userDropdown.contains(e.target)) {
-                dropdownMenu.classList.remove('show');
-            }
-        });
         
         function refreshAuthToken() {
             if (!authState.refreshToken) {
@@ -2625,26 +3051,13 @@
                 }
                 
                 userInfoDiv.innerHTML = `
-                    <div class="user-dropdown">
-                        <div class="user-details" onclick="toggleUserDropdown()">
+                    <div class="user-details">
                         <div class="user-avatar">
                             <i class="fas fa-user"></i>
                         </div>
                         <div class="user-text">
                             <div class="user-name">${authState.user.first_name} ${authState.user.last_name}</div>
                             <div class="user-role">${authState.user.user_role || 'User'}</div>
-                        </div>
-                            <i class="fas fa-chevron-up"></i>
-                    </div>
-                        <div class="dropdown-menu" id="userDropdownMenu">
-                            <a href="#" class="dropdown-item" onclick="navigateTo('settings'); closeUserDropdown();">
-                                <i class="fas fa-cog"></i>
-                                <span>Settings</span>
-                            </a>
-                            <a href="#" class="dropdown-item" onclick="logout(); closeUserDropdown();">
-                            <i class="fas fa-sign-out-alt"></i>
-                                <span>Log Out</span>
-                            </a>
                         </div>
                     </div>
                 `;
@@ -3064,10 +3477,16 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="toggle-label">
-                            <span class="toggle-text">All Day Event</span>
-                            <input type="checkbox" id="create-event-all-day" name="is_all_day" class="toggle-input" onchange="toggleTimeFields('create')">
-                        </label>
+                        <div class="toggle-container">
+                            <label class="toggle-label">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="create-event-all-day" name="is_all_day" class="toggle-input" onchange="toggleTimeFields('create')">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                                <span class="toggle-text">All Day Event</span>
+                            </label>
+                        </div>
+                        <div class="toggle-help">Event duration</div>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn-primary" onclick="handleCreateEvent()">
@@ -3143,10 +3562,16 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="toggle-label">
-                            <span class="toggle-text">All Day Event</span>
-                            <input type="checkbox" id="edit-event-all-day" name="is_all_day" class="toggle-input" onchange="toggleTimeFields('edit')">
-                        </label>
+                        <div class="toggle-container">
+                            <label class="toggle-label">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="edit-event-all-day" name="is_all_day" class="toggle-input" onchange="toggleTimeFields('edit')">
+                                    <span class="toggle-slider"></span>
+                                </div>
+                                <span class="toggle-text">All Day Event</span>
+                            </label>
+                        </div>
+                        <div class="toggle-help">Event duration</div>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn-primary" onclick="handleUpdateEvent()">

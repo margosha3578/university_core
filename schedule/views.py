@@ -190,6 +190,14 @@ def api_event_detail(request, event_id):
 @jwt_required
 def api_create_event(request):
     """Create a new event"""
+    logger.info(f"Event creation attempt by: {request.user.email} (Role: {request.user.user_role})")
+    # Only admin and professor can create events
+    if request.user.user_role not in ['admin', 'professor']:
+        logger.warning(f"Unauthorized event creation attempt by: {request.user.email}")
+        return JsonResponse({
+            'error': 'Only admin and professor users can create events'
+        }, status=403)
+    
     try:
         data = json.loads(request.body)
         
@@ -263,6 +271,14 @@ def api_create_event(request):
 @jwt_required
 def api_update_event(request, event_id):
     """Update an existing event"""
+    logger.info(f"Event update attempt: Event ID {event_id} by {request.user.email} (Role: {request.user.user_role})")
+    # Only admin and professor can update events
+    if request.user.user_role not in ['admin', 'professor']:
+        logger.warning(f"Unauthorized event update attempt: Event ID {event_id} by {request.user.email}")
+        return JsonResponse({
+            'error': 'Only admin and professor users can update events'
+        }, status=403)
+    
     try:
         event = Event.objects.get(id=event_id)
         data = json.loads(request.body)
@@ -340,6 +356,14 @@ def api_update_event(request, event_id):
 @jwt_required
 def api_delete_event(request, event_id):
     """Delete an event"""
+    logger.info(f"Event deletion attempt: Event ID {event_id} by {request.user.email} (Role: {request.user.user_role})")
+    # Only admin and professor can delete events
+    if request.user.user_role not in ['admin', 'professor']:
+        logger.warning(f"Unauthorized event deletion attempt: Event ID {event_id} by {request.user.email}")
+        return JsonResponse({
+            'error': 'Only admin and professor users can delete events'
+        }, status=403)
+    
     try:
         event = Event.objects.get(id=event_id)
         event_title = event.title

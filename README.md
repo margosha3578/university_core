@@ -132,13 +132,56 @@ university_core/
 └── requirements.txt        # Python dependencies
 ```
 
-## 👥 User Roles
+## 👥 User Roles & Permissions
 
-The system supports three user roles:
+The system implements role-based access control with three distinct user roles:
 
-- **Admin**: Full system access, can manage users, courses, and schedules
-- **Professor**: Can create and manage courses and schedules
-- **Student**: Can view courses and schedules, limited access
+### 🎓 Students (Read-Only Access)
+- **✅ View Users**: Can view all user information (list and details)
+- **✅ View Courses**: Can view all courses and lessons (read-only)
+- **✅ View Events**: Can view all events (read-only)
+- **❌ Create/Update/Delete**: No modification permissions
+
+### 👨‍🏫 Professors (Full Course/Lesson/Event Management + Read Users)
+- **✅ View Users**: Can view all user information (list and details)
+- **✅ Courses**: Full CRUD operations (create, read, update, delete)
+- **✅ Lessons**: Full CRUD operations (create, read, update, delete)
+- **✅ Events**: Full CRUD operations (create, read, update, delete)
+- **❌ User Management**: Cannot create/update/delete users
+
+### 👑 Admins (Full Access to Everything)
+- **✅ Users**: Full CRUD operations (create, read, update, delete)
+- **✅ Courses**: Full CRUD operations (create, read, update, delete)
+- **✅ Lessons**: Full CRUD operations (create, read, update, delete)
+- **✅ Events**: Full CRUD operations (create, read, update, delete)
+
+### 📋 Permission Matrix
+
+| Action | Student | Professor | Admin |
+|--------|---------|-----------|-------|
+| View Users | ✅ | ✅ | ✅ |
+| View Courses | ✅ | ✅ | ✅ |
+| View Events | ✅ | ✅ | ✅ |
+| Create Courses | ❌ | ✅ | ✅ |
+| Update Courses | ❌ | ✅ | ✅ |
+| Delete Courses | ❌ | ✅ | ✅ |
+| Create Lessons | ❌ | ✅ | ✅ |
+| Update Lessons | ❌ | ✅ | ✅ |
+| Delete Lessons | ❌ | ✅ | ✅ |
+| Create Events | ❌ | ✅ | ✅ |
+| Update Events | ❌ | ✅ | ✅ |
+| Delete Events | ❌ | ✅ | ✅ |
+| Create Users | ❌ | ❌ | ✅ |
+| Update Users | ❌ | ❌ | ✅ |
+| Delete Users | ❌ | ❌ | ✅ |
+
+### 🔐 Security Implementation
+
+- **JWT Authentication**: All API endpoints require valid JWT tokens
+- **Role Validation**: Each endpoint checks user roles before allowing access
+- **Comprehensive Logging**: All access attempts are logged with user role information
+- **Error Handling**: Proper error responses for unauthorized access attempts
+- **Permission Checks**: Server-side validation ensures clients cannot bypass restrictions
 
 ## 🗄️ Database Models
 
@@ -183,31 +226,86 @@ make connect      # Connect to running container
 make restart      # Restart containers
 ```
 
+## 🗄️ Database Population
+
+The project includes a database population script to quickly set up test data for development and testing purposes.
+
+### Populate Database with Test Data
+
+```bash
+# Using Docker (recommended)
+make populate-db
+
+# Or manually in Docker container
+docker compose exec web python scripts/populate_db.py
+
+# For local development (without Docker)
+python scripts/populate_db.py
+```
+
+### Test Data Created
+
+The population script creates comprehensive test data:
+
+#### **👥 Users (12 total)**
+- **2 Admin users**: Full system access
+- **5 Professor users**: Course and event management
+- **5 Student users**: Read-only access
+
+#### **📚 Courses (7 total)**
+- **7 courses** with detailed descriptions
+- **25 lessons** (5 lessons per course)
+- **Active/inactive status** for testing
+
+#### **📅 Events (25 total)**
+- **5 meetings**: Staff and department meetings
+- **5 lectures**: Course lectures and seminars
+- **5 exams**: Midterm and final examinations
+- **5 assignments**: Project deadlines and submissions
+- **5 other events**: Various university activities
+
+### Test Credentials
+
+After running the population script, you can use these test accounts:
+
+| Role | Email | Password | Access Level |
+|------|-------|----------|--------------|
+| Admin | `admin@university.edu` | `admin123` | Full system access |
+| Professor | `prof.smith@university.edu` | `prof123` | Course & event management |
+| Student | `student1@university.edu` | `student123` | Read-only access |
+
+### Features of Population Script
+
+- **Safe execution**: Uses `get_or_create()` to avoid duplicates
+- **Realistic data**: Creates meaningful test content
+- **Comprehensive coverage**: All models populated with related data
+- **Development ready**: Perfect for testing all system features
+- **Docker compatible**: Works seamlessly with containerized setup
+
+### Usage Notes
+
+- **Run after migration**: Execute after `python manage.py migrate`
+- **Safe to re-run**: Script won't create duplicates
+- **Development only**: Not intended for production use
+- **Test all features**: Provides data to test all system functionality
+
 ## 🔐 Security Features
 
 - JWT token-based authentication
 - CSRF protection
-- Secure cookie settings (production)
+- Secure cookie settings 
 - XSS protection
 - Content type sniffing protection
-- SSL redirect (production)
+- SSL redirect 
 
 ## 📊 API Endpoints
 
 The system provides RESTful API endpoints for:
 
 - User authentication and management
-- Course CRUD operations
+- Course management
 - Lesson management
 - Schedule/event management
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-feature`
-3. Commit changes: `git commit -am 'Add new feature'`
-4. Push to branch: `git push origin feature/new-feature`
-5. Submit a pull request
 
 ---
 

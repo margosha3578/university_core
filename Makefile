@@ -1,7 +1,7 @@
 .EXPORT_ALL_VARIABLES:
 COMPOSE_FILE ?= ./build/docker-compose/docker-compose.yml
 DEV_COMPOSE_FILE ?= ./build/docker-compose/docker-compose.dev.yml
-UNIVERSITY_SERVICE ?= core
+UNIVERSITY_SERVICE ?= web
 PROFILE ?= dev
 CURRENT_DIR = $(shell pwd)
 
@@ -54,3 +54,7 @@ dev-build: # Build docker image of the application
 .PHONY: prod-build
 prod-build: # Build docker image of the application
 	docker build --tag=$(UNIVERSITY_SERVICE) --file=build/dockerfile/Dockerfile .
+
+.PHONY: populate-db
+populate-db: # Populate database with test data
+	docker compose exec $(UNIVERSITY_SERVICE) python scripts/populate_db.py
