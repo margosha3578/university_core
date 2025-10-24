@@ -59,26 +59,16 @@ TEMPLATES = [
 ]
 
 # Database Configuration
-# Use SQLite for development, PostgreSQL for production
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', default=os.environ.get('DB_NAME', 'default_db')),
+        'USER': config('DB_USER', default=os.environ.get('DB_USER', 'default_user')),
+        'PASSWORD': config('DB_PASSWORD', default=os.environ.get('DB_PASSWORD', 'default_password')),
+        'HOST': config('DB_HOST', default=os.environ.get('DB_HOST', 'localhost')),
+        'PORT': config('DB_PORT', default=os.environ.get('DB_PORT', 5432)),
     }
-else:
-    # PostgreSQL Configuration for production
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME', default=os.environ.get('DB_NAME', 'default_db')),
-            'USER': config('DB_USER', default=os.environ.get('DB_USER', 'default_user')),
-            'PASSWORD': config('DB_PASSWORD', default=os.environ.get('DB_PASSWORD', 'default_password')),
-            'HOST': config('DB_HOST', default=os.environ.get('DB_HOST', 'localhost')),
-            'PORT': config('DB_PORT', default=os.environ.get('DB_PORT', 5432)),
-        }
-    }
+}
 
 # JWT Settings
 JWT_SECRET_KEY = config('SECRET_KEY', default=SECRET_KEY)
