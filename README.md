@@ -211,4 +211,4 @@ The system provides RESTful API endpoints for:
 
 ---
 
-**Note**: This is a university management system designed for educational institutions. Ensure proper security measures are in place before deploying to production.
+**Note**: This is a pet project created during education and is **not built for production use**. While it demonstrates Django concepts and university management system functionality, it lacks production-ready security measures, comprehensive testing, and enterprise-level features. Use this project for learning purposes only.
